@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>morning-support-facade</artifactId>
+	<packaging>jar</packaging>
+	<parent>
+		<groupId>org.pussinboots.morning</groupId>
+		<artifactId>morning-support</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+	</parent>
+	<name>morning-support-facade</name>
+	<url>http://maven.apache.org</url>
+	<description>morning  --  公益商城系统公共服务模块业务逻辑层接口</description>
+
+	<dependencies>
+		<!-- 0.Morning相关依赖 begin -->
+		<dependency>
+			<groupId>org.pussinboots.morning</groupId>
+			<artifactId>morning-common</artifactId>
+			<version>${morning.version}</version>
+		</dependency>
+		<!-- Morning相关依赖 end -->
+
+		<dependency>
+			<groupId>com.qiniu</groupId>
+			<artifactId>qiniu-java-sdk</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.aliyun.oss</groupId>
+			<artifactId>aliyun-sdk-oss</artifactId>
+		</dependency>
+
+	</dependencies>
+</project>

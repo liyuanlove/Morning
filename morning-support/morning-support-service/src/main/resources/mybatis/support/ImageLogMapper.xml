@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pussinboots.morning.support.mapper.ImageLogMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="org.pussinboots.morning.support.entity.ImageLog">
+		<id column="image_id" property="imageId" />
+		<result column="bucket" property="bucket" />
+		<result column="image_url" property="imageUrl" />
+		<result column="belong" property="belong" />
+		<result column="name" property="name" />
+		<result column="etag" property="etag" />
+		<result column="file_size" property="fileSize" />
+		<result column="mime_type" property="mimeType" />
+		<result column="create_time" property="createTime" />
+		<result column="cloud_name" property="cloudName" />
+		<result column="width" property="width" />
+		<result column="height" property="height" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        image_id AS imageId, bucket, image_url AS imageUrl, belong, name, etag, file_size AS fileSize, mime_type AS mimeType, create_time AS createTime, cloud_name AS cloudName, width, height
+    </sql>
+
+
+
+
+
+
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.pussinboots.morning.system.mapper.LogMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="org.pussinboots.morning.system.entity.Log">
+		<id column="log_id" property="logId" />
+		<result column="user_id" property="userId" />
+		<result column="create_time" property="createTime" />
+		<result column="spend_time" property="spendTime" />
+		<result column="method" property="method" />
+		<result column="user_agent" property="userAgent" />
+		<result column="user_ip" property="userIp" />
+		<result column="opt_content" property="optContent" />
+		<result column="url" property="url" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        log_id AS logId, user_id AS userId, create_time AS createTime, spend_time AS spendTime, method, user_agent AS userAgent, user_ip AS userIp, opt_content AS optContent, url
+    </sql>
+    
+    <!-- 根据分页信息/搜索内容查找日志记录列表 -->
+    <select id="listByPage" resultType="org.pussinboots.morning.system.entity.Log">
+    	SELECT
+      		<include refid="Base_Column_List" />
+      	FROM
+      		cms_log
+    	WHERE
+    		1=1
+       		<if test="search != null">
+				AND (
+					method LIKE '%' #{search} '%' 
+					OR user_agent LIKE '%' #{search} '%'
+					OR user_ip LIKE '%' #{search} '%'
+					OR opt_content LIKE '%' #{search} '%'
+					OR url LIKE '%' #{search} '%'
+				)
+			</if>
+			<if test="pageInfo.sort != null">
+				ORDER BY ${pageInfo.sort} ${pageInfo.order}
+			</if>      	  		
+    </select>
+</mapper>

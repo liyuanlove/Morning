@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<!-- status : 这个用于设置log4j2自身内部的信息输出,可以不设置,当设置成trace时,会看到log4j2内部各种详细输出 ,默认OFF
+	 monitorInterval : Log4j能够自动检测修改配置文件和重新配置本身, 设置间隔秒数。 
+	 %d{yyyy-MM-dd HH:mm:ss, SSS} : 日志生产时间 
+     %p : 日志输出格式 
+     %c : logger的名称  
+     %m : 日志内容,即 logger.info("message") 
+     %n : 换行符 
+     %C : Java类名 
+     %L : 日志输出所在行数 
+     %M : 日志输出所在方法名 
+     hostName : 本地机器名 hostAddress : 本地ip地址 
+-->
+<configuration status="off" monitorInterval="1800">
+
+	<properties>
+		<!-- 配置日志文件输出目录 -->
+		<property name="LOG_HOME">/output/logs/morning</property>
+		<!-- 日志备份目录 -->
+		<property name="BACKUP_HOME">backup</property>
+		<!-- 日志名称  -->
+		<property name="SERVER_NAME">morning</property>
+		<!-- 日志切割的最小单位 -->
+		<property name="EVERY_FILE_SIZE">5M</property>
+		<!-- 日志输出级别 -->
+		<property name="OUTPUT_LOG_LEVEL">DEBUG</property>
+	</properties>
+	
+	<appenders>
+		<!--这个输出控制台的配置 -->
+		<Console name="Console" target="SYSTEM_OUT" follow="true">
+			<!-- 控制台只输出level及以上级别的信息(onMatch),其他的直接拒绝(onMismatch) -->
+			<ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY" />
+			<!-- 输出日志的格式 -->
+			<PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %level [%C{1}:%L] - %msg%n" />
+		</Console>
+		
+		<!-- 这个会打印出所有的info及以下级别的信息,每次大小超过size,则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩,作为存档-->
+		<!-- 重要的是,如果有多个ThresholdFilter,那么Filters是必须的,同时在Filters中,首先要过滤不符合的日志级别,把不需要的首先DENY掉,然后再ACCEPT需要的日志级别,这个次序不能搞颠倒。 -->
+		<RollingFile name="RollingFile"
+			fileName="${LOG_HOME}/dev_${SERVER_NAME}.log"
+			filePattern="${LOG_HOME}/dev_${BACKUP_HOME}/dev_${SERVER_NAME}.%d{yyyy-MM-dd-HH}.log">
+			<PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %level [%C{36}.%M] - %msg%n" />
+			<Policies>
+                <SizeBasedTriggeringPolicy size="${EVERY_FILE_SIZE}" />
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+			<Filters>
+				<ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL" />
+				<ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+		</RollingFile>
+		
+		<!-- 只显示warn级别的信息 -->
+		<RollingFile name="RollingFileWarn"
+			fileName="${LOG_HOME}/dev_${SERVER_NAME}_warn.log"
+			filePattern="${LOG_HOME}/dev_${BACKUP_HOME}/dev_${SERVER_NAME}_warn.%d{yyyy-MM-dd-HH}.log">
+			<PatternLayout pattern="%d{yyyy.MM.dd HH:mm:ss.SSS} [%thread] %level [%C{36}.%M:%L] - %msg%xEx%n" />
+			<Policies>  
+                <SizeBasedTriggeringPolicy size="${EVERY_FILE_SIZE}" />
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies> 
+			<Filters>
+				<ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>  
+			   	<ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+			</Filters>
+		</RollingFile>
+		
+		<!-- 只显示error级别的信息 -->
+		<RollingFile name="RollingFileError"
+			fileName="${LOG_HOME}/dev_${SERVER_NAME}_error.log"
+			filePattern="${LOG_HOME}/dev_${BACKUP_HOME}/dev_${SERVER_NAME}_error.%d{yyyy-MM-dd-HH}.log">
+			<PatternLayout pattern="%d{yyyy.MM.dd HH:mm:ss.SSS} [%thread] %level [%C{36}.%M:%L] - %msg%xEx%n" />
+			<Policies>  
+                <SizeBasedTriggeringPolicy size="${EVERY_FILE_SIZE}" />
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies> 
+			<Filters>
+				<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY" />
+			</Filters>
+		</RollingFile>
+		
+	</appenders>
+
+	<!--然后定义logger,只有定义了logger并引入的appender,appender才会生效 -->
+	<loggers>
+        <!-- myibatis log configure -->
+        <logger name="com.apache.ibatis" level="INFO"/>
+        <logger name="org.mybatis.spring" level="DEBUG"/>
+        <logger name="java.sql.Connection" level="DEBUG"/>
+        <logger name="java.sql.Statement" level="DEBUG"/>
+        <logger name="java.sql.PreparedStatement" level="DEBUG"/>
+        
+        <!-- 减少部分debug日志 -->
+        <logger name="druid.sql" level="INFO"/>
+        <logger name="org.apache.shiro" level="INFO"/>
+        <logger name="org.mybatis.spring" level="INFO"/>
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.springframework.context" level="WARN"/>
+        <logger name="org.springframework.beans" level="WARN"/>
+        <logger name="com.baomidou.mybatisplus" level="INFO"/>
+        <logger name="org.apache.ibatis.io" level="INFO"/>
+        <logger name="org.apache.velocity" level="INFO"/>
+        
+        <!-- 业务debug日志 -->
+        <logger name="org.pussinboots.morning" level="${OUTPUT_LOG_LEVEL}" additivity="true"/>
+  
+        <!-- 配置日志的根节点,建立一个默认的root的logger,需要在root的level中指定输出的级别  -->
+		<Root level="DEBUG">
+			<appender-ref ref="Console" />
+			<appender-ref ref="RollingFile" />
+			<appender-ref ref="RollingFileWarn" />
+			<appender-ref ref="RollingFileError" />
+		</Root >
+	</loggers>
+</configuration>
